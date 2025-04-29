@@ -3,41 +3,26 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const isProduction = process.env.NODE_ENV === 'production';
-
-const conn = isProduction
-    ? mysql.createPool({  // en Railway o servidores
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT),
-        waitForConnections: true,
-        connectionLimit: 10,
-        queueLimit: 0
-    })
-    : mysql.createConnection({  // en local
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        port: parseInt(process.env.DB_PORT)
-    });
-
-// Verificador si la conexión está hecha
-conn.getConnection ? conn.getConnection((err, connection) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos (pool):', err);
-        process.exit(1);
-    }
-    console.log(`Conexión exitosa a ${process.env.DB_NAME} (producción)`);
-    connection.release(); // liberamos
-}) : conn.connect((err) => {
-    if (err) {
-        console.error('Error al conectar a la base de datos (local):', err);
-        process.exit(1);
-    }
-    console.log(`Conexión exitosa a ${process.env.DB_NAME} (local)`);
+const pool = mysql.createPool({
+    host: process.env.DB_HOST, 
+    user: process.env.DB_USER,                  
+    password: process.env.DB_PASSWORD, 
+    database: process.env.DB_NAME,             
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-module.exports = conn;
+// Manejador de reconexión
+pool.on('error', (err) => {
+    console.error('Error inesperado en la conexión a la base de datos:', err);
+    if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        console.log('Reconectando automáticamente...');
+    } else {
+        throw err;
+    }
+});
+
+console.log(`Pool creado para ${process.env.DB_NAME}`);
+module.exports = pool;
