@@ -1,4 +1,4 @@
-const conn = require('../db/config')    //trae la conexion
+const pool = require('../db/config')    //trae la conexion
 
 exports.getDashboardStats = (req, res) => {
     const query = `
@@ -42,7 +42,7 @@ exports.getDashboardStats = (req, res) => {
             ) AS reservas_cliente_top
     `;
 
-    conn.query(query, (err, rows) => {
+    pool.query(query, (err, rows) => {
         if (err) throw err;
         res.json(rows[0]);
     });

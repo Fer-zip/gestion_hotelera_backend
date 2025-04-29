@@ -1,8 +1,8 @@
-const conn = require('../db/config');
+const pool = require('../db/config');
 
 // obtener todas las reservas
 exports.getReservas = (req,res)=>{
-    conn.query('SELECT * from reservas',(err,rows)=>{
+    pool.query('SELECT * from reservas',(err,rows)=>{
         if (err) throw err
         res.json(rows)
     })
@@ -11,7 +11,7 @@ exports.getReservas = (req,res)=>{
 // obtener un reserva unica 
 exports.getReserva = (req,res)=>{
     const {idReserva} = req.params
-    conn.query('SELECT * from reservas WHERE id_reserva = ?',[idReserva],(err,rows)=>{
+    pool.query('SELECT * from reservas WHERE id_reserva = ?',[idReserva],(err,rows)=>{
         if (err) throw err
         res.json(rows)
     })
@@ -20,7 +20,7 @@ exports.getReserva = (req,res)=>{
 // Crear un reserva
 exports.createReserva = (req, res)=>{
     const {id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion} = req.body
-    conn.query('INSERT INTO reservas (id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion) VALUES (?,?,?,?,?)',[id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion], (err,result)=>{
+    pool.query('INSERT INTO reservas (id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion) VALUES (?,?,?,?,?)',[id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion], (err,result)=>{
         if (err) throw err
         res.json({message:`Reserva hecha por el huesped`,
             idHuesped:id_huesped,
@@ -33,7 +33,7 @@ exports.createReserva = (req, res)=>{
 exports.updateReserva = (req, res)=>{
     const {idReserva} = req.params
     const {fecha_inicio,fecha_fin,estado} = req.body
-    conn.query('UPDATE reservas SET fecha_inicio = ?, fecha_fin = ?, estado = ? WHERE id_reserva = ?',[fecha_inicio,fecha_fin,estado,idReserva], (err,result)=>{
+    pool.query('UPDATE reservas SET fecha_inicio = ?, fecha_fin = ?, estado = ? WHERE id_reserva = ?',[fecha_inicio,fecha_fin,estado,idReserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Datos de la reserva actulizados`,
             id:result.insertId
@@ -44,7 +44,7 @@ exports.updateReserva = (req, res)=>{
 //  ENDPOINT PARA CANCELAR RESERVAS
 exports.cancelReserva = (req, res)=>{
     const {idReserva} = req.params
-    conn.query('UPDATE reservas SET estado = "cancelada" WHERE id_reserva = ? ',[idReserva], (err,result)=>{
+    pool.query('UPDATE reservas SET estado = "cancelada" WHERE id_reserva = ? ',[idReserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Reserva cancelado`,
             id:idReserva
@@ -74,7 +74,7 @@ exports.getDetallesEspecificosReserva = (req, res) => {
         GROUP BY r.id_reserva, ha.tipo;
     `;
 
-    conn.query(query, [idReserva], (err, rows) => {
+    pool.query(query, [idReserva], (err, rows) => {
         if (err) throw err;
         res.json(rows);
     });
