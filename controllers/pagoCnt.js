@@ -1,7 +1,7 @@
-const pool = require('../db/config')    //trae la conexion
+const conn = require('../db/config')    //trae la conexion
 
 exports.getAllPagos = (req,res)=>{
-    pool.query('SELECT * FROM pagos',(err,rows)=>{
+    conn.query('SELECT * FROM pagos',(err,rows)=>{
         if (err) throw err
         res.json(rows)
     })
@@ -9,7 +9,7 @@ exports.getAllPagos = (req,res)=>{
 
 exports.getUniquePago = (req,res)=>{
     const {id_reserva} = req.params
-    pool.query('SELECT * FROM pagos where id_reserva = ?',[id_reserva],(err,rows)=>{
+    conn.query('SELECT * FROM pagos where id_reserva = ?',[id_reserva],(err,rows)=>{
         if (err) throw err
         res.json(rows)
     })
@@ -36,7 +36,7 @@ exports.createPago = (req, res) => {
         GROUP BY r.id_reserva
     `;
 
-    pool.query(sqlMonto, [id_reserva], (errMonto, resultsMonto) => {
+    conn.query(sqlMonto, [id_reserva], (errMonto, resultsMonto) => {
         if (errMonto) throw errMonto;
 
         if (resultsMonto.length === 0) {
@@ -51,7 +51,7 @@ exports.createPago = (req, res) => {
             VALUES (?, ?, ?, ?)
         `;
 
-        pool.query(sqlInsertPago, [id_reserva, montoCalculado, metodo_pago, fecha_pago], (errInsert, result) => {
+        conn.query(sqlInsertPago, [id_reserva, montoCalculado, metodo_pago, fecha_pago], (errInsert, result) => {
             if (errInsert) throw errInsert;
 
             res.json({
@@ -69,7 +69,7 @@ exports.createPago = (req, res) => {
 exports.updatePago = (req, res)=>{
     const {id_reserva} = req.params
     const {monto,metodo_pago,fecha_pago} = req.body
-    pool.query('UPDATE pagos SET monto = ?, metodo_pago ?, fecha_pago = ? WHERE id_reserva = ?',[monto,metodo_pago,fecha_pago,id_reserva], (err,result)=>{
+    conn.query('UPDATE pagos SET monto = ?, metodo_pago ?, fecha_pago = ? WHERE id_reserva = ?',[monto,metodo_pago,fecha_pago,id_reserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Datos del pago actualizados actulizados`,
             id_reserva: id_reserva

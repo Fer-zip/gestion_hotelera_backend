@@ -1,8 +1,8 @@
-const pool = require('../db/config') 
+const conn = require('../db/config') 
 
 // Obtener todos los servicios
 exports.getServicios = (req, res)=>{
-    pool.query('SELECT * from servicios',(err, rows)=>{
+    conn.query('SELECT * from servicios',(err, rows)=>{
         if(err) throw err;
         res.json(rows)
     })
@@ -11,7 +11,7 @@ exports.getServicios = (req, res)=>{
 // Obtener un unico servicio
 exports.getServicio = (req, res)=>{
     const { id } = req.params
-    pool.query('SELECT * from servicios where id = ?',[id],(err, rows)=>{
+    conn.query('SELECT * from servicios where id = ?',[id],(err, rows)=>{
         if(err) throw err;
         res.json(rows)
     })
@@ -20,7 +20,7 @@ exports.getServicio = (req, res)=>{
 // crear/insertar un servicio
 exports.createServicio = (req,res)=>{
     const {nombre,descripcion,precio} = req.body
-    pool.query('INSERT INTO servicios (nombre,descripcion,precio) VALUES (?,?,?)',[nombre,descripcion,precio],(err,result)=>{
+    conn.query('INSERT INTO servicios (nombre,descripcion,precio) VALUES (?,?,?)',[nombre,descripcion,precio],(err,result)=>{
         if (err) throw err
         res.json({
             message:'Servicio nuevo registrado',
@@ -33,7 +33,7 @@ exports.createServicio = (req,res)=>{
 exports.updateServicio = (req,res)=>{
     const {id} = req.params
     const {nombre,descripcion,precio} = req.body
-    pool.query('UPDATE servicios SET nombre = ?, descripcion = ?, precio = ? WHERE id = ?',[nombre,descripcion,precio,id], (err,result)=>{
+    conn.query('UPDATE servicios SET nombre = ?, descripcion = ?, precio = ? WHERE id = ?',[nombre,descripcion,precio,id], (err,result)=>{
         if (err) throw err
         res.json({
             message:`Datos del servicio actulizados`,
@@ -45,7 +45,7 @@ exports.updateServicio = (req,res)=>{
 // borrar un servicio
 exports.deleteServicio = (req,res)=>{
     const {id} = req.params
-    pool.query('DELETE from servicios where id = ?',[id],(err,result)=>{
+    conn.query('DELETE from servicios where id = ?',[id],(err,result)=>{
         if (err) throw err
         res.json({
             message:`Servicio eliminada`,
