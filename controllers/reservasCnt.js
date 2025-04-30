@@ -17,6 +17,24 @@ exports.getReserva = (req,res)=>{
     })
 }
 
+// Obtener acceso a reserva con datos importantes
+exports.getReservaConsulta = (req,res)=>{
+    const sql = `
+    SELECT RESERVAS.id_reserva, 
+		HUESPEDES.nombre,
+		HUESPEDES.documento_identidad, 
+		RESERVAS.fecha_inicio,
+		RESERVAS.estado,
+		RESERVAS.tipo_habitacion
+    FROM RESERVAS       
+    LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
+    `
+    conn.query(sql,(err,rows)=>{
+        if (err) throw err
+        res.json(rows)
+    })
+}
+
 // Crear un reserva
 exports.createReserva = (req, res)=>{
     const {id_huesped,fecha_inicio,fecha_fin,estado,tipo_habitacion} = req.body
@@ -52,6 +70,30 @@ exports.cancelReserva = (req, res)=>{
     })
 }
 
+// ENDPOINT PARA OBTENER LA RESERVA POR MEDIO DE CÓDIGO DE CONFIRMACION
+exports.getReservaPorCodigoConfirmacion = (req, res)=>{
+    const {codigo} = req.params
+    const sql = `
+    SELECT RESERVAS.id_reserva, 
+		HUESPEDES.nombre,
+		HUESPEDES.documento_identidad, 
+		RESERVAS.fecha_inicio,
+		RESERVAS.estado,
+		RESERVAS.tipo_habitacion,
+        CONCAT(RESERVAS.id_reserva, HUESPEDES.documento_identidad) AS codigo
+    FROM RESERVAS
+    LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
+    WHERE CONCAT(RESERVAS.id_reserva, HUESPEDES.documento_identidad)=?;
+    `
+    conn.query(sql,[codigo], (err,result)=>{
+        if (err) throw err
+        res.json(result)
+    })
+}
+
+// ENDPOINT PARA OBTENER LA RESERVA MAS RECIENTE 
+
+
 // ENDPOINT PARA VER LOS DETALLES ESPECIFICOS DE LA RESERVA SEGUN EL FRONT (usar tmbien para el checkin - es igual xd)
 exports.getDetallesEspecificosReserva = (req, res) => {
     const { idReserva } = req.params;
@@ -79,4 +121,24 @@ exports.getDetallesEspecificosReserva = (req, res) => {
         res.json(rows);
     });
 };
+
+// Consulta de reservas según el DNI
+exports.getReservaPorDNICliente = (req, res)=>{
+    const {dni} = req.params
+    const query = `
+        SELECT RESERVAS.id_reserva, 
+            HUESPEDES.nombre,
+            HUESPEDES.documento_identidad, 
+            RESERVAS.fecha_inicio,
+            RESERVAS.estado,
+            RESERVAS.tipo_habitacion
+        FROM RESERVAS
+        LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
+        WHERE HUESPEDES.documento_identidad=?;
+    `;
+    conn.query(query,[dni], (err,rows)=>{
+        if (err) throw err
+        res.json(rows)
+    })
+}
 
