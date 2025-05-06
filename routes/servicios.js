@@ -9,7 +9,7 @@ const servicios = require('../controllers/serviciosCnt')
 // actualizar : put
 
 router.get('/',servicios.getServicios);
-router.get('/:id',servicios.getServicio);
+router.get('/:nombre',servicios.getServicio);
 router.post('/',servicios.createServicio);
 router.put('/:id',servicios.updateServicio);
 router.delete('/:id',servicios.deleteServicio);

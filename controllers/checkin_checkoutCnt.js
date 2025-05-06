@@ -15,9 +15,10 @@ exports.getUniqueCheckinCheckout = (req,res)=>{
     })
 }
 
+// Al crear la reserva se coloca una fecha automatica, igual para cuando es checkout
 exports.createCheckinCheckout = (req, res)=>{
-    const {id_reserva,checkin,checkout} = req.body
-    conn.query('INSERT INTO checkin_checkout (id_reserva,checkin,checkout) VALUES (?,?,?)',[id_reserva,checkin,checkout], (err,result)=>{
+    const {id_reserva} = req.body
+    conn.query('INSERT INTO checkin_checkout (id_reserva,checkin,checkout) VALUES (?,now(),"")',[id_reserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Registro creado`,
             id_check:result.insertId,
@@ -26,11 +27,10 @@ exports.createCheckinCheckout = (req, res)=>{
     })
 }
 
-
+// En caso del checkout
 exports.updateCheckinCheckout = (req, res)=>{
     const {id_reserva} = req.params
-    const {checkin,checkout} = req.body
-    conn.query('UPDATE checkin_checkout SET checkin = ?, checkout = ?  WHERE id_reserva = ?',[checkin,checkout, id_reserva], (err,result)=>{
+    conn.query('UPDATE checkin_checkout SET checkout=now()  WHERE id_reserva = ?',[id_reserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Registro del check actulizados`,
             id_reserva:id_reserva

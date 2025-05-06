@@ -50,8 +50,8 @@ exports.createReserva = (req, res)=>{
 // actualizar los datos de una reserva
 exports.updateReserva = (req, res)=>{
     const {idReserva} = req.params
-    const {fecha_inicio,fecha_fin,estado} = req.body
-    conn.query('UPDATE reservas SET fecha_inicio = ?, fecha_fin = ?, estado = ? WHERE id_reserva = ?',[fecha_inicio,fecha_fin,estado,idReserva], (err,result)=>{
+    const {fecha_inicio,fecha_fin,tipo_habitacion,estado} = req.body
+    conn.query('UPDATE reservas SET fecha_inicio = ?, fecha_fin = ?, estado = ?, tipo_habitacion=? WHERE id_reserva = ?',[fecha_inicio,fecha_fin,estado,tipo_habitacion,idReserva], (err,result)=>{
         if (err) throw err
         res.json({message:`Datos de la reserva actulizados`,
             id:result.insertId

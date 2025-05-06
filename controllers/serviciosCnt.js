@@ -10,8 +10,8 @@ exports.getServicios = (req, res)=>{
 
 // Obtener un unico servicio
 exports.getServicio = (req, res)=>{
-    const { id } = req.params
-    conn.query('SELECT * from servicios where id = ?',[id],(err, rows)=>{
+    const { nombre } = req.params
+    conn.query('SELECT * from servicios where nombre LIKE ?',[`%${nombre}%`],(err, rows)=>{
         if(err) throw err;
         res.json(rows)
     })
@@ -45,7 +45,7 @@ exports.updateServicio = (req,res)=>{
 // borrar un servicio
 exports.deleteServicio = (req,res)=>{
     const {id} = req.params
-    conn.query('DELETE from servicios where id = ?',[id],(err,result)=>{
+    conn.query('DELETE from servicios where id_servicio = ?',[id],(err,result)=>{
         if (err) throw err
         res.json({
             message:`Servicio eliminada`,
