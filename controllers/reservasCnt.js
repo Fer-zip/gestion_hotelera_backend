@@ -20,14 +20,14 @@ exports.getReserva = (req,res)=>{
 // Obtener acceso a reserva con datos importantes
 exports.getReservaConsulta = (req,res)=>{
     const sql = `
-    SELECT RESERVAS.id_reserva, 
-		HUESPEDES.nombre,
-		HUESPEDES.documento_identidad, 
-		RESERVAS.fecha_inicio,
-		RESERVAS.estado,
-		RESERVAS.tipo_habitacion
-    FROM RESERVAS       
-    LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
+    SELECT reservas.id_reserva, 
+		huespedes.nombre,
+		huespedes.documento_identidad, 
+		reservas.fecha_inicio,
+		reservas.estado,
+		reservas.tipo_habitacion
+    FROM reservas       
+    LEFT JOIN huespedes ON reservas.id_huesped=huespedes.id_huesped
     `
     conn.query(sql,(err,rows)=>{
         if (err) throw err
@@ -74,16 +74,16 @@ exports.cancelReserva = (req, res)=>{
 exports.getReservaPorCodigoConfirmacion = (req, res)=>{
     const {codigo} = req.params
     const sql = `
-    SELECT RESERVAS.id_reserva, 
-		HUESPEDES.nombre,
-		HUESPEDES.documento_identidad, 
-		RESERVAS.fecha_inicio,
-		RESERVAS.estado,
-		RESERVAS.tipo_habitacion,
-        CONCAT(RESERVAS.id_reserva, HUESPEDES.documento_identidad) AS codigo
-    FROM RESERVAS
-    LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
-    WHERE CONCAT(RESERVAS.id_reserva, HUESPEDES.documento_identidad)=?;
+    SELECT reservas.id_reserva, 
+		huespedes.nombre,
+		huespedes.documento_identidad, 
+		reservas.fecha_inicio,
+		reservas.estado,
+		reservas.tipo_habitacion,
+        CONCAT(reservas.id_reserva, huespedes.documento_identidad) AS codigo
+    FROM reservas
+    LEFT JOIN huespedes ON reservas.id_huesped=huespedes.id_huesped
+    WHERE CONCAT(reservas.id_reserva, huespedes.documento_identidad)=?;
     `
     conn.query(sql,[codigo], (err,result)=>{
         if (err) throw err
@@ -126,15 +126,15 @@ exports.getDetallesEspecificosReserva = (req, res) => {
 exports.getReservaPorDNICliente = (req, res)=>{
     const {dni} = req.params
     const query = `
-        SELECT RESERVAS.id_reserva, 
-            HUESPEDES.nombre,
-            HUESPEDES.documento_identidad, 
-            RESERVAS.fecha_inicio,
-            RESERVAS.estado,
-            RESERVAS.tipo_habitacion
-        FROM RESERVAS
-        LEFT JOIN HUESPEDES ON Reservas.id_huesped=HUESPEDES.id_huesped
-        WHERE HUESPEDES.documento_identidad=?;
+        SELECT reservas.id_reserva, 
+            huespedes.nombre,
+            huespedes.documento_identidad, 
+            reservas.fecha_inicio,
+            reservas.estado,
+            reservas.tipo_habitacion
+        FROM reservas
+        LEFT JOIN huespedes ON reservas.id_huesped=huespedes.id_huesped
+        WHERE huespedes.documento_identidad=?;
     `;
     conn.query(query,[dni], (err,rows)=>{
         if (err) throw err
